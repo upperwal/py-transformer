@@ -6,8 +6,10 @@ from .attention import DecoderBlock
 
 class BigramLanguageModel(nn.Module):
 
-    def __init__(self, vocab_size, block_size, embedding_size, head_size):
+    def __init__(self, vocab_size, block_size, embedding_size, head_size, device='cpu'):
         super().__init__()
+
+        self.device = device
 
         self.block_size = block_size
 
@@ -27,7 +29,7 @@ class BigramLanguageModel(nn.Module):
 
         # Look into the embedding table
         token_emb = self.token_embedding_table(idx) # B, T, C
-        pos_emb = self.position_embedding_table(torch.arange(T)) # T, C
+        pos_emb = self.position_embedding_table(torch.arange(T, device=self.device)) # T, C
         x = token_emb + pos_emb # B, T, C
         x = self.decoders(x) # B, T, C
         logits = self.lm_head(x) # B, T, V

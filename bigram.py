@@ -6,7 +6,7 @@ from .attention import DecoderBlock
 
 class BigramLanguageModel(nn.Module):
 
-    def __init__(self, vocab_size, block_size, embedding_size, head_size, device='cpu'):
+    def __init__(self, vocab_size, decoder_layer_size, block_size, embedding_size, head_size, dropout, device='cpu'):
         super().__init__()
 
         self.device = device
@@ -15,11 +15,7 @@ class BigramLanguageModel(nn.Module):
 
         self.token_embedding_table = nn.Embedding(vocab_size, embedding_size) # 
         self.position_embedding_table = nn.Embedding(block_size, embedding_size)
-        self.decoders = nn.Sequential(
-            DecoderBlock(block_size, embedding_size, embedding_size // head_size),
-            DecoderBlock(block_size, embedding_size, embedding_size // head_size),
-            DecoderBlock(block_size, embedding_size, embedding_size // head_size)
-        )
+        self.decoders = nn.Sequential(*[DecoderBlock(block_size, embedding_size, embedding_size // head_size, dropout) for _ in range(decoder_layer_size)])
         self.lm_head = nn.Linear(embedding_size, vocab_size)
 
     def forward(self, idx, targets=None):

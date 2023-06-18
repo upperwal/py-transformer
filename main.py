@@ -5,10 +5,12 @@ from batch import Batch
 from bigram import BigramLanguageModel
 from optimiser import Optimiser
 
-BLOCK_SIZE = 512
+BLOCK_SIZE = 256
 BATCH_SIZE = 64
-EMBEDDING_SIZE = 256
+EMBEDDING_SIZE = 384
+DECODER_LAYER_SIZE = 6
 HEAD_SIZE = 64
+DROPOUT = 0.2
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -28,7 +30,14 @@ def main():
 
     print(xb, yb)
 
-    m = BigramLanguageModel(block_size=BLOCK_SIZE, vocab_size=tokeniser.vocab_size, embedding_size=EMBEDDING_SIZE, head_size=HEAD_SIZE)
+    m = BigramLanguageModel(
+        decoder_layer_size=DECODER_LAYER_SIZE, 
+        block_size=BLOCK_SIZE, 
+        vocab_size=tokeniser.vocab_size, 
+        embedding_size=EMBEDDING_SIZE, 
+        head_size=HEAD_SIZE,
+        dropout=DROPOUT
+    )
     print(m)
     logits, loss = m(xb, yb)
 
@@ -42,7 +51,7 @@ def main():
 
     o = Optimiser(m, 10e-4)
 
-    for i in range(20000):
+    for i in range(2):
         xb, yb = batch.get_batch('train')
         logits, loss = o.optimise(xb, yb)
     

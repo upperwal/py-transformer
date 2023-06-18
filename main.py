@@ -10,6 +10,8 @@ BATCH_SIZE = 64
 EMBEDDING_SIZE = 256
 HEAD_SIZE = 64
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 def main():
     l = Loader('./data/input.txt')
     tokeniser = Tokeniser(l.get_data())

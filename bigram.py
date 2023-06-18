@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-from attention import DecoderBlock
+from .attention import DecoderBlock
 
 class BigramLanguageModel(nn.Module):
 
